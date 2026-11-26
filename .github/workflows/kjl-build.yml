@@ -141,6 +141,8 @@ jobs:
           cd build/artifacts
           cp "$ROOT/README.md" "$ROOT/COPYING" "$ROOT/PrivacyPolicy.md" "$ROOT/SECURITY.md" .
           echo "PortableMode=true" > bin/ENV.ini
+          # Import libraries are build-time only; keep the portable payload lean.
+          rm -f bin/*.a
           # Only deploy against the executable. Qt DLLs are already copied
           # next to it by CMake; pointing windeployqt at non-Qt DLLs makes it
           # exit non-zero ("does not seem to be a Qt executable").

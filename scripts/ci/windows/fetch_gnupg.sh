@@ -97,6 +97,13 @@ else
   unzip -o "$DL/$FILE" -d build/artifacts/gnupg/
 fi
 
+# The upstream zip wraps everything in a top-level "gnupg/" directory.  The
+# application looks for <app>/../gnupg/bin, so flatten that extra level.
+if [ -d build/artifacts/gnupg/gnupg ]; then
+  mv build/artifacts/gnupg/gnupg/* build/artifacts/gnupg/
+  rmdir build/artifacts/gnupg/gnupg
+fi
+
 # Gate the staged payload rather than trusting the extractor: every image must
 # still start with MZ and hold the PE signature exactly where e_lfanew points.
 BROKEN=0
