@@ -923,7 +923,7 @@
     </message>
     <message>
         <location filename="../../../../src/ui/dialog/Wizard.cpp" line="197"/>
-        <source>You can also skip these guides and start using GpgFrontend directly.</source>
+        <source>You can also skip these guides and start using KJL-GPG directly.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1031,7 +1031,7 @@
     </message>
     <message>
         <location filename="../../../../src/ui/UserInterfaceUtils.cpp" line="95"/>
-        <source>It seems that GnuPG (gpg) is not properly installed. Please refer to the &lt;a href=&apos;https://www.gpgfrontend.bktus.com/overview/faq/#troubleshooting-gnupg-installation-issues&apos;&gt;FAQ&lt;/a&gt; for instructions on fixing the installation. After resolving the issue, relaunch GpgFrontend.&lt;br /&gt;&lt;br /&gt;Alternatively, you can open the GnuPG Controller to configure a custom GnuPG installation for GpgFrontend to use. Once set, GpgFrontend will restart automatically.&lt;br /&gt;&lt;br /&gt;Details: %1</source>
+        <source>It seems that GnuPG (gpg) is not properly installed. Please refer to the &lt;a href=&apos;https://www.gpgfrontend.bktus.com/overview/faq/#troubleshooting-gnupg-installation-issues&apos;&gt;FAQ&lt;/a&gt; for instructions on fixing the installation. After resolving the issue, relaunch KJL-GPG.&lt;br /&gt;&lt;br /&gt;Alternatively, you can open the GnuPG Controller to configure a custom GnuPG installation for KJL-GPG to use. Once set, KJL-GPG will restart automatically.&lt;br /&gt;&lt;br /&gt;Details: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1069,7 +1069,7 @@
     </message>
     <message>
         <location filename="../../../../src/ui/dialog/Wizard.cpp" line="236"/>
-        <source>GpgFrontend is ready. You can adjust these options before finishing.</source>
+        <source>KJL-GPG is ready. You can adjust these options before finishing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1079,7 +1079,7 @@
     </message>
     <message>
         <location filename="../../../../src/ui/dialog/Wizard.cpp" line="245"/>
-        <source>Report issues, ask questions, or send feedback to help improve GpgFrontend.</source>
+        <source>Report issues, ask questions, or send feedback to help improve KJL-GPG.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1821,7 +1821,7 @@ The target may be on another volume, or you may not have sufficient permissions.
     <name>GpgFrontend::UI::GeneralTab</name>
     <message>
         <location filename="../../../../src/ui/dialog/settings/SettingsGeneral.cpp" line="45"/>
-        <source>Clear gpg password cache when closing GpgFrontend.</source>
+        <source>Clear gpg password cache when closing KJL-GPG.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1901,7 +1901,7 @@ The target may be on another volume, or you may not have sufficient permissions.
     </message>
     <message>
         <location filename="../../../../src/ui/dialog/settings/SettingsGeneral.cpp" line="75"/>
-        <source>GpgFrontend will restart automatically if you change the language!</source>
+        <source>KJL-GPG will restart automatically if you change the language!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2117,7 +2117,7 @@ This will result in loss of all cached form positions, statuses, key servers, et
     </message>
     <message>
         <location filename="../../../../src/ui/dialog/controller/GnuPGControllerDialog.cpp" line="375"/>
-        <source>Currently, GpgFrontend supports a maximum of 8 key databases. Please remove an existing database to add a new one.</source>
+        <source>Currently, KJL-GPG supports a maximum of 8 key databases. Please remove an existing database to add a new one.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2140,7 +2140,7 @@ This will result in loss of all cached form positions, statuses, key servers, et
     <message>
         <location filename="../../../../src/ui/dialog/controller/GnuPGControllerDialog.cpp" line="398"/>
         <location filename="../../../../src/ui/dialog/controller/GnuPGControllerDialog.cpp" line="639"/>
-        <source>The edited key database path is not a valid path that GpgFrontend can use</source>
+        <source>The edited key database path is not a valid path that KJL-GPG can use</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2388,7 +2388,7 @@ This will result in loss of all cached form positions, statuses, key servers, et
     <name>GpgFrontend::UI::IntroPage</name>
     <message>
         <location filename="../../../../src/ui/dialog/Wizard.cpp" line="126"/>
-        <source>Welcome to GpgFrontend</source>
+        <source>Welcome to KJL-GPG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2398,7 +2398,7 @@ This will result in loss of all cached form positions, statuses, key servers, et
     </message>
     <message>
         <location filename="../../../../src/ui/dialog/Wizard.cpp" line="131"/>
-        <source>&lt;b&gt;GpgFrontend&lt;/b&gt; helps you encrypt, decrypt, sign, and verify messages and files with OpenPGP. This short wizard will point you to the most useful places to start.</source>
+        <source>&lt;b&gt;KJL-GPG&lt;/b&gt; helps you encrypt, decrypt, sign, and verify messages and files with OpenPGP. This short wizard will point you to the most useful places to start.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3222,7 +3222,7 @@ These keys are no longer available. Do you want to remove them from the group?</
     <message>
         <location filename="../../../../src/ui/widgets/KeyList.cpp" line="541"/>
         <source>You&apos;ve dropped something on the key list.
-GpgFrontend will now try to import key(s).</source>
+KJL-GPG will now try to import key(s).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4816,13 +4816,13 @@ Please install a GUI-based Pinentry (e.g., &apos;pinentry-qt&apos;, &apos;pinent
 
 Without a GUI Pinentry, GnuPG cannot prompt you for passwords or passphrases.
 
-After installing it, please restart GpgFrontend. The configuration file will be updated automatically.</source>
+After installing it, please restart KJL-GPG. The configuration file will be updated automatically.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../../src/ui/main_window/MainWindow.cpp" line="205"/>
         <location filename="../../../../src/ui/main_window/MainWindow.cpp" line="208"/>
-        <source>Critical error occur while loading GpgFrontend.</source>
+        <source>Critical error occur while loading KJL-GPG.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4886,7 +4886,7 @@ After installing it, please restart GpgFrontend. The configuration file will be 
     </message>
     <message>
         <location filename="../../../../src/ui/main_window/MainWindowGpgOperaFunction.cpp" line="143"/>
-        <source>The operation succeeded, but GpgFrontend failed to finalize one or more output files.
+        <source>The operation succeeded, but KJL-GPG failed to finalize one or more output files.
 
 Temporary output files have been cleaned up. Original files were kept unchanged.</source>
         <translation type="unfinished"></translation>
@@ -6750,7 +6750,7 @@ Would you like to fetch these keys from the key server?</source>
     </message>
     <message>
         <location filename="../../../../src/ui/dialog/controller/SmartCardControllerDialog.cpp" line="410"/>
-        <source>Note: Smart card support of GpgFrontend requires GnuPG version 2.3.0 or later.</source>
+        <source>Note: Smart card support of KJL-GPG requires GnuPG version 2.3.0 or later.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7073,7 +7073,7 @@ Would you like to fetch these keys from the key server?</source>
     </message>
     <message>
         <location filename="../../../../src/ui/widgets/TextEdit.cpp" line="120"/>
-        <source>Cannot open this file. The file is TOO LARGE (&gt;1MB) for GpgFrontend Text Editor.</source>
+        <source>Cannot open this file. The file is TOO LARGE (&gt;1MB) for KJL-GPG Text Editor.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7246,7 +7246,7 @@ Would you like to fetch these keys from the key server?</source>
     <name>GpgFrontend::UI::Wizard</name>
     <message>
         <location filename="../../../../src/ui/dialog/Wizard.cpp" line="89"/>
-        <source>Welcome to GpgFrontend</source>
+        <source>Welcome to KJL-GPG</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

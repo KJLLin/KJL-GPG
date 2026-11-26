@@ -53,7 +53,7 @@ class GlobalSettingStation::Impl {
     const auto protable_mode = qApp->property("GFPortableMode").toBool();
     if (protable_mode) {
       Module::UpsertRTValue("core", "env.state.portable", 1);
-      LOG_I() << "GpgFrontend runs in the portable mode now";
+      LOG_I() << "KJL-GPG runs in the portable mode now";
 
 #ifdef Q_OS_LINUX
       if (IsAppImageENV()) {

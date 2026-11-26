@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2021-2024 Saturneric <eric@bktus.com>
  *
- * This file is part of GpgFrontend.
+ * This file is part of KJL-GPG.
  *
  * GpgFrontend is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GpgFrontend. If not, see <https://www.gnu.org/licenses/>.
+ * along with KJL-GPG. If not, see <https://www.gnu.org/licenses/>.
  *
  * The initial version of the source code is inherited from
  * the gpg4usb project, which is under GPL-3.0-or-later.
@@ -86,7 +86,7 @@ Wizard::Wizard(QWidget* parent) : QWizard(parent) {
   setWizardStyle(QWizard::ModernStyle);
 #endif
 
-  setWindowTitle(tr("Welcome to GpgFrontend"));
+  setWindowTitle(tr("Welcome to KJL-GPG"));
   setOption(QWizard::NoBackButtonOnStartPage);
   setOption(QWizard::HaveHelpButton, false);
 
@@ -123,12 +123,12 @@ void Wizard::slot_wizard_accepted() {
 }
 
 IntroPage::IntroPage(QWidget* parent) : QWizardPage(parent) {
-  setTitle(tr("Welcome to GpgFrontend"));
+  setTitle(tr("Welcome to KJL-GPG"));
   setSubTitle(
       tr("A simple and privacy-focused OpenPGP tool for text and files."));
 
   auto* intro_label = CreateBodyLabel(
-      tr("<b>GpgFrontend</b> helps you encrypt, decrypt, sign, and verify "
+      tr("<b>KJL-GPG</b> helps you encrypt, decrypt, sign, and verify "
          "messages and files with OpenPGP. This short wizard will point you to "
          "the most useful places to start."));
 
@@ -194,7 +194,7 @@ ChoosePage::ChoosePage(QWidget* parent) : QWizardPage(parent) {
           "https://gpgfrontend.bktus.com/guides/view-keypair-info/")));
 
   auto* hint_label = CreateMutedLabel(
-      tr("You can also skip these guides and start using GpgFrontend "
+      tr("You can also skip these guides and start using KJL-GPG "
          "directly."));
 
   layout->addSpacing(2);
@@ -233,7 +233,7 @@ void ChoosePage::slot_jump_page(const QString& page) {
 ConclusionPage::ConclusionPage(QWidget* parent) : QWizardPage(parent) {
   setTitle(tr("Ready to use"));
   setSubTitle(
-      tr("GpgFrontend is ready. You can adjust these options before "
+      tr("KJL-GPG is ready. You can adjust these options before "
          "finishing."));
 
   auto* layout = new QVBoxLayout;
@@ -243,14 +243,14 @@ ConclusionPage::ConclusionPage(QWidget* parent) : QWizardPage(parent) {
   layout->addWidget(CreateLinkCard(
       tr("Contact and feedback"),
       tr("Report issues, ask questions, or send feedback to help improve "
-         "GpgFrontend."),
+         "KJL-GPG."),
       QStringLiteral("https://gpgfrontend.bktus.com/overview/contact/")));
 
   layout->addWidget(CreateLinkCard(
       tr("Submit an issue on GitHub"),
       tr("Use GitHub issues if you want to report a bug or track a technical "
          "problem."),
-      QStringLiteral("https://github.com/saturneric/GpgFrontend/issues")));
+      QStringLiteral("https://github.com/KJLLin/KJL-GPG/issues")));
 
   check_updates_checkbox_ = new QCheckBox(tr("Check for updates on startup"));
   check_updates_checkbox_->setChecked(false);

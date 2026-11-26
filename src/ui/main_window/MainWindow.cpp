@@ -135,7 +135,7 @@ void MainWindow::Init() noexcept {
                  "'pinentry-gnome3', or 'pinentry-mac' on macOS).\n\n"
                  "Without a GUI Pinentry, GnuPG cannot prompt you for "
                  "passwords or passphrases.\n\n"
-                 "After installing it, please restart GpgFrontend. The "
+                 "After installing it, please restart KJL-GPG. The "
                  "configuration file will be updated automatically."));
         }
       });
@@ -202,10 +202,10 @@ void MainWindow::Init() noexcept {
                              {"main_window", GFBuffer(RegisterQObject(this))},
                          });
   } catch (...) {
-    LOG_W() << tr("Critical error occur while loading GpgFrontend.");
+    LOG_W() << tr("Critical error occur while loading KJL-GPG.");
     QMessageBox::critical(
         nullptr, tr("Loading Failed"),
-        tr("Critical error occur while loading GpgFrontend."));
+        tr("Critical error occur while loading KJL-GPG."));
     QCoreApplication::quit();
     exit(0);
   }

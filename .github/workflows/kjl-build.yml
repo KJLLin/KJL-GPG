@@ -1,0 +1,146 @@
+name: KJL-GPG Build (Qt5 / Windows 7)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release/2.1
+      - kjl
+    paths-ignore:
+      - "**.md"
+      - "resource/lfs/locale/**"
+
+permissions:
+  contents: read
+
+env:
+  # GnuPG bundled into the portable package. 2.4.x is the last series that is
+  # known to work on Windows 7.
+  GNUPG_VERSION: "2.4.8"
+  KJL_VERSION: "2.1.14-kjl.1"
+
+jobs:
+  windows-qt5:
+    runs-on: windows-2022
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: "false"
+          submodules: false
+          persist-credentials: false
+
+      - name: Init required submodules
+        shell: bash
+        run: |
+          set -euo pipefail
+          git submodule update --init --depth 1 \
+            third_party/gpgme \
+            third_party/libassuan \
+            third_party/libgpg-error \
+            third_party/qttranslations
+
+      - name: Set up MSYS2 / MinGW Qt5
+        uses: msys2/setup-msys2@v2
+        with:
+          update: false
+          release: false
+          cache: true
+          install: >-
+            git
+            zip
+            unzip
+            gnupg
+            msys2-devel
+            base-devel
+            msys2-runtime-devel
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-make
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-qt5
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-libarchive
+            mingw-w64-x86_64-libgpg-error
+            mingw-w64-x86_64-libassuan
+            mingw-w64-x86_64-argon2
+            mingw-w64-x86_64-gtest
+            mingw-w64-x86_64-autotools
+            mingw-w64-x86_64-angleproject
+            mingw-w64-x86_64-texinfo
+            mingw-w64-x86_64-ccache
+
+      - name: Build GpgME (static, C++ bindings)
+        shell: msys2 {0}
+        run: |
+          set -euo pipefail
+          cd "$(cygpath -u "${{ github.workspace }}")/third_party/gpgme"
+          export CC="ccache gcc"
+          export CXX="ccache g++"
+          export CFLAGS="${CFLAGS:-} -Wno-int-conversion -Wno-incompatible-pointer-types"
+          ./autogen.sh
+          mkdir -p build && cd build
+          ../configure \
+            --prefix=/mingw64 \
+            --enable-maintainer-mode \
+            --enable-static \
+            --disable-shared \
+            --enable-silent-rules \
+            --disable-dependency-tracking \
+            --enable-languages=cl \
+            --disable-gpgconf-test \
+            --disable-gpg-test \
+            --disable-gpgsm-test \
+            --disable-g13-test \
+            --enable-w32-glib
+          make -j4
+          make install
+
+      - name: Configure and build KJL-GPG
+        shell: msys2 {0}
+        env:
+          CCACHE_COMPILERTYPE: gcc
+        run: |
+          set -euo pipefail
+          cd "$(cygpath -u "${{ github.workspace }}")"
+          mkdir -p build && cd build
+          cmake -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DGPGFRONTEND_QT5_BUILD=ON \
+            -DGPGFRONTEND_LINK_GPGME_INTO_CORE=ON \
+            -DGPGFRONTEND_VERSION_OVERRIDE="${KJL_VERSION}" \
+            ..
+          cmake --build . -- -j 4
+
+      - name: Fetch GnuPG for Windows 7
+        shell: msys2 {0}
+        run: |
+          set -euo pipefail
+          cd "$(cygpath -u "${{ github.workspace }}")"
+          scripts/ci/windows/fetch_gnupg.sh
+
+      - name: Package portable ZIP
+        shell: msys2 {0}
+        run: |
+          set -euo pipefail
+          ROOT="$(cygpath -u "${{ github.workspace }}")"
+          cd "$ROOT"
+          NAME="KJL-GPG-${KJL_VERSION}-windows-x86_64-portable.zip"
+          mkdir -p build/upload-artifact
+          cd build/artifacts
+          cp "$ROOT/README.md" "$ROOT/COPYING" "$ROOT/PrivacyPolicy.md" "$ROOT/SECURITY.md" .
+          echo "PortableMode=true" > bin/ENV.ini
+          for f in bin/*.dll bin/KJL-GPG.exe; do
+            windeployqt-qt5 --no-translations --force "$f"
+          done
+          zip -r "$ROOT/build/upload-artifact/$NAME" .
+          ls -lh "$ROOT/build/upload-artifact"
+
+      - name: Upload portable package
+        uses: actions/upload-artifact@v4
+        with:
+          name: KJL-GPG-windows-x86_64-portable
+          path: ${{ github.workspace }}/build/upload-artifact/*
+          if-no-files-found: error

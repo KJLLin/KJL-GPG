@@ -255,7 +255,7 @@ auto InitBasicPath() -> bool {
 
   if (!GetComponentPathsByGpgConf(default_gpgconf_path)) {
     LOG_E() << "Cannot get components paths by gpgconf!"
-            << "GpgFrontend cannot start under this situation!";
+            << "KJL-GPG cannot start under this situation!";
     CoreSignalStation::GetInstance()->SignalBadGnupgEnv(
         QCoreApplication::tr("Cannot get Infos from GpgConf"));
     return false;
@@ -272,7 +272,7 @@ auto InitBasicPath() -> bool {
 
   if (target_gpgconf_path.isEmpty()) {
     LOG_E() << "Cannot find gpgconf!"
-            << "GpgFrontend cannot start under this situation!";
+            << "KJL-GPG cannot start under this situation!";
     CoreSignalStation::GetInstance()->SignalBadGnupgEnv(
         QCoreApplication::tr("Cannot Find GpgConf"));
     return false;
@@ -280,7 +280,7 @@ auto InitBasicPath() -> bool {
 
   if (target_gnupg_path.isEmpty()) {
     LOG_E() << "Cannot find GnuPG by gpgconf!"
-            << "GpgFrontend cannot start under this situation!";
+            << "KJL-GPG cannot start under this situation!";
     CoreSignalStation::GetInstance()->SignalBadGnupgEnv(
         QCoreApplication::tr("Cannot Find GnuPG"));
     return false;
@@ -295,7 +295,7 @@ auto InitBasicPath() -> bool {
   LOG_I() << "home path provided by gpgconf: " << default_home_path;
   if (default_home_path.isEmpty()) {
     LOG_E() << "Cannot find default home path by gpgconf!"
-            << "GpgFrontend cannot start under this situation!";
+            << "KJL-GPG cannot start under this situation!";
     CoreSignalStation::GetInstance()->SignalBadGnupgEnv(
         QCoreApplication::tr("Cannot Find Default Home Path"));
     return false;
@@ -451,7 +451,7 @@ auto InitGpgFrontendCore(CoreInitArgs args) -> int {
   // initialize gpgme
   if (!InitGpgME()) {
     LOG_E() << "Oops, GpgME init failed!"
-            << "GpgFrontend cannot start under this situation!";
+            << "KJL-GPG cannot start under this situation!";
     Module::UpsertRTValue("core", "env.state.gpgme", -1);
     CoreSignalStation::GetInstance()->SignalBadGnupgEnv(
         QCoreApplication::tr("GpgME Initiation Failed"));
@@ -463,7 +463,7 @@ auto InitGpgFrontendCore(CoreInitArgs args) -> int {
   // decide gpgconf, gnupg and default home path
   if (!InitBasicPath()) {
     LOG_E() << "Oops, Basic Path init failed!"
-            << "GpgFrontend cannot start under this situation!";
+            << "KJL-GPG cannot start under this situation!";
     return -1;
   }
 
@@ -503,7 +503,7 @@ auto InitGpgFrontendCore(CoreInitArgs args) -> int {
 
   if (key_dbs.isEmpty()) {
     LOG_E() << "Cannot find any valid key database!"
-            << "GpgFrontend cannot start under this situation!";
+            << "KJL-GPG cannot start under this situation!";
     Module::UpsertRTValue("core", "env.state.ctx", -1);
     CoreSignalStation::GetInstance()->SignalBadGnupgEnv(
         QCoreApplication::tr("No valid Key Database"));
@@ -533,7 +533,7 @@ auto InitGpgFrontendCore(CoreInitArgs args) -> int {
 
   if (!default_ctx.Good()) {
     LOG_E() << "Init GpgME Default Context failed!"
-            << "GpgFrontend cannot start under this situation!";
+            << "KJL-GPG cannot start under this situation!";
     Module::UpsertRTValue("core", "env.state.ctx", -1);
     CoreSignalStation::GetInstance()->SignalBadGnupgEnv(
         QCoreApplication::tr("GpgME Default Context Initiation Failed"));
@@ -544,7 +544,7 @@ auto InitGpgFrontendCore(CoreInitArgs args) -> int {
 
   if (!GpgKeyGetter::GetInstance(kGpgFrontendDefaultChannel).FlushKeyCache()) {
     LOG_E() << "Init GpgME Default Key Database failed!"
-            << "GpgFrontend cannot start under this situation!";
+            << "KJL-GPG cannot start under this situation!";
     Module::UpsertRTValue("core", "env.state.ctx", -1);
     CoreSignalStation::GetInstance()->SignalBadGnupgEnv(
         QCoreApplication::tr("Gpg Default Key Database Initiation Failed"));

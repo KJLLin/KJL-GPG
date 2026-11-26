@@ -89,7 +89,7 @@ auto CreateInfoForm(QWidget* parent = nullptr) -> QFormLayout* {
 
 auto CreateBuildInfoText() -> QString {
   return QStringLiteral(
-             "GpgFrontend: %1\n"
+             "KJL-GPG: %1\n"
              "Qt: %2\n"
              "GPGME: %3\n"
              "Assuan: %4\n"
@@ -209,7 +209,7 @@ InfoTab::InfoTab(QWidget* parent) : QWidget(parent) {
   auto* developer_label = CreateBodyLabel(
       QStringLiteral(
           "%1<br/><br/>"
-          "<a href=\"https://github.com/saturneric/GpgFrontend/issues\">%2</a>"
+          "<a href=\"https://github.com/KJLLin/KJL-GPG/issues\">%2</a>"
           "<br/>"
           "<a href=\"https://gpgfrontend.bktus.com/overview/contact/\">%3</a>"
           "<br/>"

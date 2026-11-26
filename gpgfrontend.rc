@@ -1,1 +1,32 @@
- IDI_ICON1 ICON DISCARDABLE "gpgfrontend.ico"
+#include <windows.h>
+
+IDI_ICON1 ICON DISCARDABLE "gpgfrontend.ico"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 2,1,14,0
+ PRODUCTVERSION 2,1,14,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "KJL"
+            VALUE "FileDescription", "KJL-GPG - OpenPGP Encryption Tool"
+            VALUE "FileVersion", "2.1.14"
+            VALUE "InternalName", "KJL-GPG"
+            VALUE "OriginalFilename", "KJL-GPG.exe"
+            VALUE "ProductName", "KJL-GPG"
+            VALUE "ProductVersion", "2.1.14"
+            VALUE "LegalCopyright", "GPL-3.0. Based on GpgFrontend by Saturneric and contributors."
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

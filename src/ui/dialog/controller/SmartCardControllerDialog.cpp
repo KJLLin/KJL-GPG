@@ -407,7 +407,7 @@ void SmartCardControllerDialog::reset_status() {
       << "</p>";
 
   out << "<p><b>"
-      << tr("Note: Smart card support of GpgFrontend requires GnuPG version "
+      << tr("Note: Smart card support of KJL-GPG requires GnuPG version "
             "2.3.0 or later.")
       << "</b></p>";
 

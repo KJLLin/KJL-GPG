@@ -40,10 +40,10 @@ gf_git_version("${CMAKE_CURRENT_SOURCE_DIR}")
 message(STATUS "GpgFrontend Version ${GF_VERSION} (from ${GF_VERSION_SOURCE}, build number ${GF_VERSION_BUILD_NUMBER})")
 
 # define project
-project(GpgFrontend
+project(KJL-GPG
   VERSION ${GF_VERSION_CORE}
-  DESCRIPTION "GpgFrontend is a modern, cross-platform, open-source GUI for OpenPGP encryption."
-  HOMEPAGE_URL "https://gpgfrontend.bktus.com"
+  DESCRIPTION "KJL-GPG is a Chinese-friendly OpenPGP encryption tool for Windows 7 and later, forked from GpgFrontend."
+  HOMEPAGE_URL "https://github.com/KJLLin/KJL-GPG"
   LANGUAGES CXX)
 
 # show cmake version

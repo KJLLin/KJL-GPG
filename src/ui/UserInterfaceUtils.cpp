@@ -98,10 +98,10 @@ CommonUtils::CommonUtils() : QWidget(nullptr) {
                "#troubleshooting-gnupg-installation-issues'>FAQ</a> for "
                "instructions on fixing the installation. After resolving the "
                "issue, "
-               "relaunch GpgFrontend.<br /><br />"
+               "relaunch KJL-GPG.<br /><br />"
                "Alternatively, you can open the GnuPG Controller to configure "
-               "a custom GnuPG installation for GpgFrontend to use. Once set, "
-               "GpgFrontend will restart automatically.<br /><br />"
+               "a custom GnuPG installation for KJL-GPG to use. Once set, "
+               "KJL-GPG will restart automatically.<br /><br />"
                "Details: %1")
                 .arg(reason));
         msg_box.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);

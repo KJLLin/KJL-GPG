@@ -539,7 +539,7 @@ void KeyList::dropEvent(QDropEvent* event) {
   dialog.setWindowTitle(tr("Import Keys"));
 
   auto* label = new QLabel(tr("You've dropped something on the key list.\n"
-                              "GpgFrontend will now try to import key(s)."),
+                              "KJL-GPG will now try to import key(s)."),
                            &dialog);
 
   auto* check_box =

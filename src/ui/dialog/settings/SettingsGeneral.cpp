@@ -42,7 +42,7 @@ GeneralTab::GeneralTab(QWidget* parent)
   ui_->cacheBox->setTitle(tr("Base"));
 
   ui_->clearGpgPasswordCacheCheckBox->setText(
-      tr("Clear gpg password cache when closing GpgFrontend."));
+      tr("Clear gpg password cache when closing KJL-GPG."));
 
   ui_->modulePolicyLabel->setText(tr("Module Loading Policy:"));
   ui_->modulePolicyComboBox->addItem(tr("Only Integrated Modules"),
@@ -72,7 +72,7 @@ GeneralTab::GeneralTab(QWidget* parent)
   ui_->langBox->setTitle(tr("Language"));
   ui_->langNoteLabel->setText(
       "<b>" + tr("NOTE") + tr(": ") + "</b>" +
-      tr("GpgFrontend will restart automatically if you change the language!"));
+      tr("KJL-GPG will restart automatically if you change the language!"));
 
   ui_->dataBox->setTitle(tr("Data"));
   ui_->clearAllLogFilesButton->setText(

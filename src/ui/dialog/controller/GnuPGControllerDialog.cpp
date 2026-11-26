@@ -372,7 +372,7 @@ void GnuPGControllerDialog::slot_add_new_key_database() {
   if (key_db_infos_.size() >= 8) {
     QMessageBox::critical(
         this, tr("Maximum Key Database Limit Reached"),
-        tr("Currently, GpgFrontend supports a maximum of 8 key databases. "
+        tr("Currently, KJL-GPG supports a maximum of 8 key databases. "
            "Please remove an existing database to add a new one."));
     return;
   }
@@ -396,7 +396,7 @@ void GnuPGControllerDialog::slot_add_new_key_database() {
             if (key_db_fs_path.isEmpty()) {
               QMessageBox::warning(this, tr("Invalid Key Database Paths"),
                                    tr("The edited key database path is not a "
-                                      "valid path that GpgFrontend can use"));
+                                      "valid path that KJL-GPG can use"));
               return;
             }
 
@@ -637,7 +637,7 @@ void GnuPGControllerDialog::slot_edit_key_database() {
             if (key_db_fs_path.isEmpty()) {
               QMessageBox::warning(this, tr("Invalid Key Database Paths"),
                                    tr("The edited key database path is not a "
-                                      "valid path that GpgFrontend can use"));
+                                      "valid path that KJL-GPG can use"));
               return;
             }
 

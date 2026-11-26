@@ -1,4 +1,26 @@
-# GpgFrontend
+# KJL-GPG
+
+> **KJL-GPG** 是基于 [GpgFrontend](https://github.com/saturneric/GpgFrontend)
+> 2.1.14（`release/2.1` 分支，GPL-3.0）的二次开发版本，面向 Windows 7 及以上
+> 系统，保留 OpenPGP 全部核心能力，并逐步重做界面与中文体验。
+>
+> 上游项目与作者：Saturneric 及 GpgFrontend 贡献者。本仓库不是上游官方版本，
+> 问题请反馈到 [KJLLin/KJL-GPG](https://github.com/KJLLin/KJL-GPG/issues)。
+
+![KJL-GPG](https://img.shields.io/badge/KJL--GPG-2.1.14--kjl.1-blue)
+![Platform](https://img.shields.io/badge/platform-Windows%207%2B-lightgrey)
+![License](https://img.shields.io/badge/License-GPL--3.0-orange)
+
+## 与原版的差异（当前）
+
+- 应用名、窗口标题、关于页、向导文案改为 **KJL-GPG**。
+- 默认构建为 **Qt 5.15 / Windows x86_64**，可在 Windows 7 SP1 上运行。
+- 便携包内置 **GnuPG 2.4.8**（2.4.x 是最后一代稳定支持 Win7 的 GnuPG）。
+- 保留 GPL-3.0 许可证与上游版权声明；源码完全公开。
+
+---
+
+# GpgFrontend（上游说明）
 
 ![Languages](https://img.shields.io/badge/languages-C%2B%2B%20%7C%20Rust-blue)
 ![License](https://img.shields.io/badge/License-GPL--3.0-orange)

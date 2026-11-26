@@ -118,7 +118,7 @@ void TextEdit::SlotOpenFile(const QString& path) {
     QMessageBox::critical(
         this, tr("Error"),
         tr("Cannot open this file. The file is TOO LARGE (>1MB) for "
-           "GpgFrontend Text Editor."));
+           "KJL-GPG Text Editor."));
     return;
   }
 

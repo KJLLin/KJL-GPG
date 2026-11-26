@@ -140,7 +140,7 @@ void MainWindow::exec_file_operas_helper(
 
     slot_refresh_info_board(
         -1,
-        tr("The operation succeeded, but GpgFrontend failed to finalize one "
+        tr("The operation succeeded, but KJL-GPG failed to finalize one "
            "or more output files.\n\n"
            "Temporary output files have been cleaned up. Original files were "
            "kept unchanged."));

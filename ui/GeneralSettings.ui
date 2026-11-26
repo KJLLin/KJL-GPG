@@ -46,7 +46,7 @@
             <item row="1" column="0" colspan="2">
              <widget class="QCheckBox" name="clearGpgPasswordCacheCheckBox">
               <property name="text">
-               <string>Clear gpg password cache when closing GpgFrontend.</string>
+               <string>Clear gpg password cache when closing KJL-GPG.</string>
               </property>
              </widget>
             </item>
@@ -134,7 +134,7 @@
           <item>
            <widget class="QLabel" name="langNoteLabel">
             <property name="text">
-             <string>NOTE: GpgFrontend will restart automatically if you change the language!</string>
+             <string>NOTE: KJL-GPG will restart automatically if you change the language!</string>
             </property>
            </widget>
           </item>
