@@ -141,9 +141,10 @@ jobs:
           cd build/artifacts
           cp "$ROOT/README.md" "$ROOT/COPYING" "$ROOT/PrivacyPolicy.md" "$ROOT/SECURITY.md" .
           echo "PortableMode=true" > bin/ENV.ini
-          for f in bin/*.dll bin/KJL-GPG.exe; do
-            windeployqt-qt5 --no-translations --force "$f"
-          done
+          # Only deploy against the executable. Qt DLLs are already copied
+          # next to it by CMake; pointing windeployqt at non-Qt DLLs makes it
+          # exit non-zero ("does not seem to be a Qt executable").
+          windeployqt-qt5 --no-translations --force bin/KJL-GPG.exe
           zip -r "$ROOT/build/upload-artifact/$NAME" .
           ls -lh "$ROOT/build/upload-artifact"
 
