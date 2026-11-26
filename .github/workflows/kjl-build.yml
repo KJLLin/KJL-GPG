@@ -61,7 +61,6 @@ jobs:
             mingw-w64-x86_64-make
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-qt5
-            mingw-w64-x86_64-qt5-tools
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-libarchive
             mingw-w64-x86_64-libgpg-error
@@ -72,6 +71,15 @@ jobs:
             mingw-w64-x86_64-angleproject
             mingw-w64-x86_64-texinfo
             mingw-w64-x86_64-ccache
+
+      - name: Install Qt5 Linguist tools (retired from pacman index)
+        shell: msys2 {0}
+        run: |
+          set -euo pipefail
+          curl -fL -o /tmp/qt5-tools.pkg.tar.zst \
+            https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-qt5-tools-5.15.19-2-any.pkg.tar.zst
+          echo "a96e2a38efe9ecba3ef9164b21bfc758c9b7dc0db7de061002f61398e0d00b95  /tmp/qt5-tools.pkg.tar.zst" | sha256sum -c -
+          pacman -U --noconfirm /tmp/qt5-tools.pkg.tar.zst
 
       - name: Build GpgME (static, C++ bindings)
         shell: msys2 {0}
