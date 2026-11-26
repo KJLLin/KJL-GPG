@@ -91,8 +91,7 @@ jobs:
             --disable-gpgconf-test \
             --disable-gpg-test \
             --disable-gpgsm-test \
-            --disable-g13-test \
-            --enable-w32-glib
+            --disable-g13-test
           # Only the C library is used by KJL-GPG. Building the whole tree
           # would also build the Texinfo manual, which the MSYS2 makeinfo
           # cannot parse; build and install src/ alone.
