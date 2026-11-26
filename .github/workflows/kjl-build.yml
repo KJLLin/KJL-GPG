@@ -84,19 +84,20 @@ jobs:
           mkdir -p build && cd build
           ../configure \
             --prefix=/mingw64 \
-            --enable-maintainer-mode \
             --enable-static \
             --disable-shared \
             --enable-silent-rules \
             --disable-dependency-tracking \
-            --enable-languages=cl \
             --disable-gpgconf-test \
             --disable-gpg-test \
             --disable-gpgsm-test \
             --disable-g13-test \
             --enable-w32-glib
-          make -j4
-          make install
+          # Only the C library is used by KJL-GPG. Building the whole tree
+          # would also build the Texinfo manual, which the MSYS2 makeinfo
+          # cannot parse; build and install src/ alone.
+          make -C src -j4
+          make -C src install
 
       - name: Configure and build KJL-GPG
         shell: msys2 {0}
