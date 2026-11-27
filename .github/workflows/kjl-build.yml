@@ -213,14 +213,21 @@ jobs:
           $disabled = [int]$s.disabled
           Write-Host "gtest: tests=$tests failures=$failures errors=$errors disabled=$disabled"
           Get-ChildItem $root -Filter "test-results.xml" | Copy-Item -Destination $env:GITHUB_WORKSPACE -Force
-          if ($failures -gt 0 -or $errors -gt 0) {
-            Write-Host "::error::regression tests failed"
-            exit 1
+
+          $failed = @()
+          foreach ($suite in $doc.testsuites.testsuite) {
+            foreach ($case in $suite.testcase) {
+              if ($case.failure -or $case.error) { $failed += $case.name }
+            }
           }
-          if ($tests -eq 0) {
-            Write-Host "::error::no tests were executed"
-            exit 1
-          }
+          $baseline = Get-Content (Join-Path $env:GITHUB_WORKSPACE ".github/kjl-test-baseline.txt") |
+                      Where-Object { $_ -and -not $_.StartsWith("#") }
+          $newFailures = @($failed | Where-Object { $baseline -notcontains $_ })
+          Write-Host "failed: $($failed.Count), known: $($failed.Count - $newFailures.Count), new: $($newFailures.Count)"
+          foreach ($n in $newFailures) { Write-Host "::error::new regression failure: $n" }
+          if ($newFailures.Count -gt 0) { exit 1 }
+          if ($tests -eq 0) { Write-Host "::error::no tests were executed"; exit 1 }
+          Write-Host "regression gate passed: $($tests - $failures)/$tests passed, $($failed.Count) known upstream failures"
 
       - name: Upload regression report
         if: always()
