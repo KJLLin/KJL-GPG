@@ -7,16 +7,24 @@
 > 上游项目与作者：Saturneric 及 GpgFrontend 贡献者。本仓库不是上游官方版本，
 > 问题请反馈到 [KJLLin/KJL-GPG](https://github.com/KJLLin/KJL-GPG/issues)。
 
-![KJL-GPG](https://img.shields.io/badge/KJL--GPG-2.1.14--kjl.1-blue)
+![KJL-GPG](https://img.shields.io/badge/KJL--GPG-2.1.14--kjl.2-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%207%2B-lightgrey)
 ![License](https://img.shields.io/badge/License-GPL--3.0-orange)
 
 ## 与原版的差异（当前）
 
 - 应用名、窗口标题、关于页、向导文案改为 **KJL-GPG**。
+- 全新 **浅色 / 深色** 双主题设计系统，可在「设置 → 外观 → 界面主题」切换。
+- 统一扁平化单色图标、8–12px 圆角卡片、克制的蓝色强调色和更舒展的表格行高。
 - 默认构建为 **Qt 5.15 / Windows x86_64**，可在 Windows 7 SP1 上运行。
 - 便携包内置 **GnuPG 2.4.8**（2.4.x 是最后一代稳定支持 Win7 的 GnuPG）。
 - 保留 GPL-3.0 许可证与上游版权声明；源码完全公开。
+
+## 界面预览
+
+| 浅色主题 | 深色主题 |
+| --- | --- |
+| ![浅色主题](docs/screenshots/ui-light.png) | ![深色主题](docs/screenshots/ui-dark.png) |
 
 ---
 

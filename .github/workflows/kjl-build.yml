@@ -17,7 +17,7 @@ env:
   # GnuPG bundled into the portable package. 2.4.x is the last series that is
   # known to work on Windows 7.
   GNUPG_VERSION: "2.4.8"
-  KJL_VERSION: "2.1.14-kjl.1"
+  KJL_VERSION: "2.1.14-kjl.2"
 
 jobs:
   windows-qt5:
