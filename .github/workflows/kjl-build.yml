@@ -143,6 +143,17 @@ jobs:
           echo "PortableMode=true" > bin/ENV.ini
           # Import libraries are build-time only; keep the portable payload lean.
           rm -f bin/*.a
+          # CMake only copies direct dependencies. Pull in the remaining
+          # MinGW runtime libraries (glib/gobject, zlib-ng, ...) so the
+          # package also runs on a clean Windows box.
+          for pass in 1 2; do
+            for f in bin/*.dll bin/KJL-GPG.exe; do
+              ldd "$f" 2>/dev/null || true
+            done | awk '{for (i = 1; i <= NF; i++) if ($i ~ /^\/mingw64\/bin\//) print $i}' \
+              | sort -u | while read -r dll; do
+                [ -f "bin/$(basename "$dll")" ] || cp "$dll" bin/
+              done
+          done
           # Only deploy against the executable. Qt DLLs are already copied
           # next to it by CMake; pointing windeployqt at non-Qt DLLs makes it
           # exit non-zero ("does not seem to be a Qt executable").
@@ -217,4 +228,74 @@ jobs:
         with:
           name: KJL-GPG-regression-report
           path: ${{ github.workspace }}/test-results.xml
+          if-no-files-found: warn
+
+  # Visual regression evidence: launch the packaged app on a clean runner and
+  # capture the window, so UI breakage is visible in the run itself.
+  ui-screenshot:
+    needs: windows-qt5
+    runs-on: windows-2022
+    timeout-minutes: 20
+
+    steps:
+      - name: Download portable package
+        uses: actions/download-artifact@v4
+        with:
+          name: KJL-GPG-windows-x86_64-portable
+          path: pkg
+
+      - name: Launch KJL-GPG and capture screenshot
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $zip = Get-ChildItem pkg -Filter *.zip | Select-Object -First 1
+          Expand-Archive $zip.FullName -DestinationPath pkg/expanded -Force
+          $root = (Resolve-Path pkg/expanded).Path
+          $bin = Join-Path $root "bin"
+          $env:PATH = "$(Join-Path $root 'gnupg\bin');$bin;$env:PATH"
+          $env:GNUPGHOME = Join-Path $root "gnupg-home"
+          New-Item -ItemType Directory -Force $env:GNUPGHOME | Out-Null
+          Set-Content -Path (Join-Path $bin "ENV.ini") -Value "PortableMode=true"
+          $proc = Start-Process -FilePath (Join-Path $bin "KJL-GPG.exe") `
+                   -WorkingDirectory $bin -PassThru
+          Start-Sleep -Seconds 20
+          Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+          Add-Type @"
+          using System;
+          using System.Runtime.InteropServices;
+          public class KJLShot {
+            [StructLayout(LayoutKind.Sequential)] public struct RECT { public int L,T,R,B; }
+            [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+            [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr dc, uint flags);
+            [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+          }
+          "@
+          $proc.Refresh()
+          $h = $proc.MainWindowHandle
+          if ($h -eq 0) { throw "KJL-GPG did not open a window" }
+          [KJLShot]::SetForegroundWindow($h) | Out-Null
+          Start-Sleep -Seconds 2
+          $r = New-Object KJLShot+RECT
+          [KJLShot]::GetWindowRect($h, [ref]$r) | Out-Null
+          $w = [Math]::Max(1, $r.R - $r.L); $ht = [Math]::Max(1, $r.B - $r.T)
+          $bmp = New-Object System.Drawing.Bitmap $w, $ht
+          $g = [System.Drawing.Graphics]::FromImage($bmp)
+          $hdc = $g.GetHdc()
+          [KJLShot]::PrintWindow($h, $hdc, 2) | Out-Null
+          $g.ReleaseHdc($hdc); $g.Dispose()
+          $out = Join-Path $env:GITHUB_WORKSPACE "ui-screenshot.png"
+          $bmp.Save($out, [System.Drawing.Imaging.ImageFormat]::Png)
+          $bmp.Dispose()
+          if (-not (Test-Path $out) -or (Get-Item $out).Length -lt 20000) {
+            throw "screenshot looks empty"
+          }
+          Write-Host "screenshot: $out ($((Get-Item $out).Length) bytes)"
+          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+
+      - name: Upload UI screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KJL-GPG-ui-screenshot
+          path: ${{ github.workspace }}/ui-screenshot.png
           if-no-files-found: warn
