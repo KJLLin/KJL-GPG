@@ -156,3 +156,65 @@ jobs:
           name: KJL-GPG-windows-x86_64-portable
           path: ${{ github.workspace }}/build/upload-artifact/*
           if-no-files-found: error
+
+  # End-to-end regression on the exact ZIP users download: unpack it, point
+  # GnuPG/GPGME at the bundled binaries, then run the built-in gtest suite.
+  regression-test:
+    needs: windows-qt5
+    runs-on: windows-2022
+    timeout-minutes: 45
+
+    steps:
+      - name: Download portable package
+        uses: actions/download-artifact@v4
+        with:
+          name: KJL-GPG-windows-x86_64-portable
+          path: pkg
+
+      - name: Run built-in unit tests from the package
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $zip = Get-ChildItem pkg -Filter *.zip | Select-Object -First 1
+          if (-not $zip) { throw "portable ZIP not found" }
+          Expand-Archive $zip.FullName -DestinationPath pkg/expanded -Force
+          $root = (Resolve-Path pkg/expanded).Path
+          $bin = Join-Path $root "bin"
+          $gnupg = Join-Path $root "gnupg\bin"
+          $env:PATH = "$gnupg;$bin;$env:PATH"
+          $env:GNUPGHOME = Join-Path $root "gnupg-home"
+          New-Item -ItemType Directory -Force $env:GNUPGHOME | Out-Null
+          $xml = Join-Path $root "test-results.xml"
+          $env:GTEST_OUTPUT = "xml:$xml"
+          Set-Content -Path (Join-Path $bin "ENV.ini") -Value "PortableMode=true"
+          Write-Host "binary: $bin\KJL-GPG.exe"
+          $p = Start-Process -FilePath (Join-Path $bin "KJL-GPG.exe") `
+                -ArgumentList "--test" -WorkingDirectory $bin -NoNewWindow -Wait -PassThru
+          Write-Host "exit code: $($p.ExitCode)"
+          if (-not (Test-Path $xml)) {
+            throw "gtest XML not produced; the suite did not run to completion"
+          }
+          [xml]$doc = Get-Content $xml
+          $s = $doc.testsuites
+          $tests = [int]$s.tests
+          $failures = [int]$s.failures
+          $errors = [int]$s.errors
+          $disabled = [int]$s.disabled
+          Write-Host "gtest: tests=$tests failures=$failures errors=$errors disabled=$disabled"
+          Get-ChildItem $root -Filter "test-results.xml" | Copy-Item -Destination $env:GITHUB_WORKSPACE -Force
+          if ($failures -gt 0 -or $errors -gt 0) {
+            Write-Host "::error::regression tests failed"
+            exit 1
+          }
+          if ($tests -eq 0) {
+            Write-Host "::error::no tests were executed"
+            exit 1
+          }
+
+      - name: Upload regression report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KJL-GPG-regression-report
+          path: ${{ github.workspace }}/test-results.xml
+          if-no-files-found: warn
