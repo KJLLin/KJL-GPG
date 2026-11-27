@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <QIcon>
+
 #include "core/module/Event.h"
 #include "core/typedef/CoreTypedef.h"
 #include "core/typedef/GpgTypedef.h"
@@ -41,6 +43,10 @@ class GpgVerifyResultAnalyse;
 }  // namespace GpgFrontend
 
 namespace GpgFrontend::UI {
+
+/** Build a theme-aware flat icon from the bundled PNG artwork. */
+auto MakeThemeIcon(const QString& path) -> QIcon;
+
 
 class KeyList;
 class TextEdit;

@@ -28,6 +28,10 @@
 
 #include "SettingsGeneral.h"
 
+#include <QComboBox>
+#include <QFormLayout>
+#include <QGroupBox>
+
 #include "SettingsDialog.h"
 #include "core/function/GlobalSettingStation.h"
 #include "ui_GeneralSettings.h"
@@ -38,6 +42,18 @@ GeneralTab::GeneralTab(QWidget* parent)
     : QWidget(parent),
       ui_(GpgFrontend::SecureCreateSharedObject<Ui_GeneralSettings>()) {
   ui_->setupUi(this);
+
+  auto* appearance_box = new QGroupBox(tr("Appearance"), this);
+  auto* appearance_layout = new QFormLayout(appearance_box);
+  appearance_layout->setContentsMargins(12, 20, 12, 12);
+  appearance_layout->setSpacing(10);
+  ui_theme_select_ = new QComboBox(appearance_box);
+  ui_theme_select_->addItem(tr("Light"), "light");
+  ui_theme_select_->addItem(tr("Dark"), "dark");
+  appearance_layout->addRow(tr("UI theme:"), ui_theme_select_);
+  ui_->verticalLayout->insertWidget(1, appearance_box);
+  connect(ui_theme_select_, qOverload<int>(&QComboBox::currentIndexChanged),
+          this, &GeneralTab::SignalRestartNeeded);
 
   ui_->cacheBox->setTitle(tr("Base"));
 
@@ -125,6 +141,11 @@ GeneralTab::GeneralTab(QWidget* parent)
 void GeneralTab::SetSettings() {
   auto settings = GetSettings();
 
+  const auto ui_theme =
+      settings.value("appearance/ui_theme", "light").toString();
+  ui_theme_select_->setCurrentIndex(
+      qMax(0, ui_theme_select_->findData(ui_theme)));
+
   auto default_workspace_as =
       settings.value("basic/default_workspace_as", "file_panel").toString();
   if (default_workspace_as == "file_panel") {
@@ -195,6 +216,8 @@ void GeneralTab::ApplySettings() {
                     ui_->restoreTextEditorPageCheckBox->isChecked());
   settings.setValue("basic/confirm_import_keys",
                     ui_->importConfirmationCheckBox->isChecked());
+  settings.setValue("appearance/ui_theme",
+                    ui_theme_select_->currentData().toString());
   settings.setValue("basic/lang", lang_.key(ui_->langSelectBox->currentText()));
   settings.setValue("basic/module_loading_policy",
                     ui_->modulePolicyComboBox->currentData().toString());

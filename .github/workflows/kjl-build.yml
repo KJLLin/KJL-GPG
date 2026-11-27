@@ -275,9 +275,6 @@ jobs:
           $cfg = Join-Path $root "config"
           New-Item -ItemType Directory -Force $cfg | Out-Null
           Set-Content -Path (Join-Path $cfg "config.ini") -Value "[basic]`nlang=zh_CN"
-          $proc = Start-Process -FilePath (Join-Path $bin "KJL-GPG.exe") `
-                   -WorkingDirectory $bin -PassThru
-          Start-Sleep -Seconds 20
           Add-Type -AssemblyName System.Windows.Forms, System.Drawing
           Add-Type @"
           using System;
@@ -289,32 +286,52 @@ jobs:
             [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
           }
           "@
-          $proc.Refresh()
-          $h = $proc.MainWindowHandle
-          if ($h -eq 0) { throw "KJL-GPG did not open a window" }
-          [KJLShot]::SetForegroundWindow($h) | Out-Null
-          Start-Sleep -Seconds 2
-          $r = New-Object KJLShot+RECT
-          [KJLShot]::GetWindowRect($h, [ref]$r) | Out-Null
-          $w = [Math]::Max(1, $r.R - $r.L); $ht = [Math]::Max(1, $r.B - $r.T)
-          $bmp = New-Object System.Drawing.Bitmap $w, $ht
-          $g = [System.Drawing.Graphics]::FromImage($bmp)
-          $hdc = $g.GetHdc()
-          [KJLShot]::PrintWindow($h, $hdc, 2) | Out-Null
-          $g.ReleaseHdc($hdc); $g.Dispose()
-          $out = Join-Path $env:GITHUB_WORKSPACE "ui-screenshot.png"
-          $bmp.Save($out, [System.Drawing.Imaging.ImageFormat]::Png)
-          $bmp.Dispose()
-          if (-not (Test-Path $out) -or (Get-Item $out).Length -lt 20000) {
-            throw "screenshot looks empty"
+
+          function Capture-Theme([string]$theme) {
+            # QSettings maps appearance/ui_theme to [appearance] ui_theme.
+            Set-Content -Path (Join-Path $cfg "config.ini") `
+              -Value "[basic]`nlang=zh_CN`n`n[appearance]`nui_theme=$theme"
+            $proc = Start-Process -FilePath (Join-Path $bin "KJL-GPG.exe") `
+                     -WorkingDirectory $bin -PassThru
+            $h = [IntPtr]::Zero
+            for ($i = 0; $i -lt 30; $i++) {
+              Start-Sleep -Seconds 1
+              $proc.Refresh()
+              $h = $proc.MainWindowHandle
+              if ($h -ne 0) { break }
+            }
+            if ($h -eq 0) { throw "KJL-GPG did not open a window ($theme)" }
+            Start-Sleep -Seconds 3
+            [KJLShot]::SetForegroundWindow($h) | Out-Null
+            Start-Sleep -Seconds 2
+            $r = New-Object KJLShot+RECT
+            [KJLShot]::GetWindowRect($h, [ref]$r) | Out-Null
+            $w = [Math]::Max(1, $r.R - $r.L); $ht = [Math]::Max(1, $r.B - $r.T)
+            $bmp = New-Object System.Drawing.Bitmap $w, $ht
+            $g = [System.Drawing.Graphics]::FromImage($bmp)
+            $hdc = $g.GetHdc()
+            [KJLShot]::PrintWindow($h, $hdc, 2) | Out-Null
+            $g.ReleaseHdc($hdc); $g.Dispose()
+            $out = Join-Path $env:GITHUB_WORKSPACE "ui-screenshot-$theme.png"
+            $bmp.Save($out, [System.Drawing.Imaging.ImageFormat]::Png)
+            $bmp.Dispose()
+            if (-not (Test-Path $out) -or (Get-Item $out).Length -lt 20000) {
+              throw "screenshot looks empty ($theme)"
+            }
+            Write-Host "screenshot: $out ($((Get-Item $out).Length) bytes)"
+            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 2
           }
-          Write-Host "screenshot: $out ($((Get-Item $out).Length) bytes)"
-          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+
+          Capture-Theme "light"
+          Capture-Theme "dark"
 
       - name: Upload UI screenshot
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: KJL-GPG-ui-screenshot
-          path: ${{ github.workspace }}/ui-screenshot.png
+          path: |
+            ${{ github.workspace }}/ui-screenshot-light.png
+            ${{ github.workspace }}/ui-screenshot-dark.png
           if-no-files-found: warn

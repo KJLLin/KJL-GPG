@@ -119,6 +119,10 @@
         <file alias="open.png">resource/lfs/icons/open.png</file>
         <file alias="harddisk.png">resource/lfs/icons/harddisk.png</file>
     </qresource>
+    <qresource prefix="/css">
+        <file alias="kjl-light.qss">resource/css/kjl-light.qss</file>
+        <file alias="kjl-dark.qss">resource/css/kjl-dark.qss</file>
+    </qresource>
     <qresource prefix="/test/key">
         <file alias="pv1.key">resource/lfs/test/data/pv1.key</file>
         <file alias="pv2.key">resource/lfs/test/data/pv2.key</file>

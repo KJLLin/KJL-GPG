@@ -525,14 +525,14 @@ void MainWindow::create_tool_bars() {
   SetupToolBar(file_tool_bar_, icon_style_, icon_size_);
 
   open_button_ = new QToolButton(this);
-  SetupMenuToolButton(open_button_, open_menu_, QIcon(":/icons/open.png"),
+  SetupMenuToolButton(open_button_, open_menu_, MakeThemeIcon(":/icons/open.png"),
                       tr("Open"), tr("Open a file or directory"), icon_style_,
                       icon_size_);
   file_tool_bar_->addWidget(open_button_);
 
   workspace_button_ = new QToolButton(this);
   SetupMenuToolButton(workspace_button_, workspace_menu_,
-                      QIcon(":/icons/workspace.png"), tr("Workspace"),
+                      MakeThemeIcon(":/icons/workspace.png"), tr("Workspace"),
                       tr("Open a text editor or file panel"), icon_style_,
                       icon_size_);
   file_tool_bar_->addWidget(workspace_button_);
@@ -553,7 +553,7 @@ void MainWindow::create_tool_bars() {
 
   import_button_ = new QToolButton(this);
   SetupMenuToolButton(import_button_, import_key_menu_,
-                      QIcon(":/icons/key_import.png"), tr("Import"),
+                      MakeThemeIcon(":/icons/key_import.png"), tr("Import"),
                       tr("Import a key from file, editor, or clipboard"),
                       icon_style_, icon_size_);
 
@@ -758,12 +758,10 @@ void MainWindow::apply_default_layout() {
 }
 
 void MainWindow::init_main_window_style() {
-  setStyleSheet(R"(
-QToolBar {
-  spacing: 3px;
-  padding: 2px;
-  border: none;
-  background: palette(window);
+  // Appearance is owned by the global KJL-GPG QSS theme. Do not install a
+  // widget-local stylesheet here: it would take precedence and silently drop
+  // the rounded toolbar, menu and status-bar rules.
+  setStyleSheet(QString());
 }
 
 QToolBar::separator {

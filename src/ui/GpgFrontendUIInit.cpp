@@ -28,6 +28,8 @@
 
 #include "GpgFrontendUIInit.h"
 
+#include <QFile>
+#include <QStyleFactory>
 #include <QtNetwork>
 
 #include "core/GpgConstants.h"
@@ -197,42 +199,38 @@ void InitGpgFrontendUI(QApplication* app) {
   InitUITranslations();
 
   auto settings = GetSettings();
-  auto theme = settings.value("appearance/theme").toString().toLower();
 
-  // Resolve the effective style. If the user has explicitly chosen a valid
-  // style, honor it; otherwise fall back to Fusion on the AppImage build to
-  // make it look better.
-  auto available_styles = QStyleFactory::keys();
-  for (QString& s : available_styles) s = s.toLower();
+  // KJL-GPG uses a custom QSS design system. Fusion is the only Qt style that
+  // honors the full set of QSS metrics on Windows; the native style silently
+  // ignores several border/padding rules.
+  QApplication::setStyle(QStyleFactory::create("Fusion"));
 
-  QString effective_style;
-  if (!theme.isEmpty() && available_styles.contains(theme)) {
-    effective_style = theme;
-  } else {
-    if (IsAppImageENV()) effective_style = "fusion";
-  }
+  const auto ui_theme =
+      settings.value("appearance/ui_theme", "light").toString().toLower();
+  const bool dark = ui_theme == "dark";
 
-  // Apply the resolved style.
-#if defined(Q_OS_MACOS)
-  // On macOS apply the style plainly. SetFusionAsDefaultStyle's hand-rolled
-  // dark palette does not fit the platform; Fusion picks up the native system
-  // palette on its own.
-  if (!effective_style.isEmpty()) {
-    QApplication::setStyle(QStyleFactory::create(effective_style));
+  QPalette palette;
+  palette.setColor(QPalette::Window, dark ? QColor("#0B1220") : QColor("#F3F6FB"));
+  palette.setColor(QPalette::WindowText, dark ? QColor("#E2E8F0") : QColor("#1E293B"));
+  palette.setColor(QPalette::Base, dark ? QColor("#111A2C") : QColor("#FFFFFF"));
+  palette.setColor(QPalette::AlternateBase, dark ? QColor("#0E1727") : QColor("#F7FAFE"));
+  palette.setColor(QPalette::Text, dark ? QColor("#E2E8F0") : QColor("#1E293B"));
+  palette.setColor(QPalette::Button, dark ? QColor("#162136") : QColor("#FFFFFF"));
+  palette.setColor(QPalette::ButtonText, dark ? QColor("#E2E8F0") : QColor("#1E293B"));
+  palette.setColor(QPalette::Highlight, dark ? QColor("#1E3A8A") : QColor("#DBEAFE"));
+  palette.setColor(QPalette::HighlightedText, dark ? QColor("#DBEAFE") : QColor("#1E3A8A"));
+  palette.setColor(QPalette::ToolTipBase, dark ? QColor("#E2E8F0") : QColor("#0F172A"));
+  palette.setColor(QPalette::ToolTipText, dark ? QColor("#0F172A") : QColor("#F8FAFC"));
+  palette.setColor(QPalette::Disabled, QPalette::Text,
+                   dark ? QColor("#5B6A80") : QColor("#9AA6B8"));
+  palette.setColor(QPalette::Disabled, QPalette::ButtonText,
+                   dark ? QColor("#5B6A80") : QColor("#9AA6B8"));
+  QApplication::setPalette(palette);
+
+  QFile qss(dark ? ":/css/kjl-dark.qss" : ":/css/kjl-light.qss");
+  if (qss.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    qApp->setStyleSheet(QString::fromUtf8(qss.readAll()));
   }
-#else
-  // Elsewhere, Fusion goes through the dedicated default treatment (which also
-  // sets the dark palette), regardless of whether it comes from the fallback
-  // above or from an explicitly saved setting. This keeps the appearance
-  // identical across launches: previously the dark palette was only applied
-  // when no theme was saved, so once "fusion" got persisted (e.g. by opening
-  // and closing the settings dialog) later launches silently dropped it.
-  if (effective_style.compare("fusion", Qt::CaseInsensitive) == 0) {
-    SetFusionAsDefaultStyle();
-  } else if (!effective_style.isEmpty()) {
-    QApplication::setStyle(QStyleFactory::create(effective_style));
-  }
-#endif
 
   // register meta types
   qRegisterMetaType<QSharedPointer<GpgPassphraseContext> >(

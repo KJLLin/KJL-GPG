@@ -1892,6 +1892,22 @@ The target may be on another volume, or you may not have sufficient permissions.
         <translation>语言</translation>
     </message>
     <message>
+        <source>Appearance</source>
+        <translation>外观</translation>
+    </message>
+    <message>
+        <source>UI theme:</source>
+        <translation>界面主题：</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>浅色</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>深色</translation>
+    </message>
+    <message>
         <location filename="../../../../src/ui/dialog/settings/SettingsGeneral.cpp" line="74"/>
         <source>NOTE</source>
         <translation>提示</translation>

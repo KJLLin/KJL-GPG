@@ -142,3 +142,4 @@ rust/target/
 rust/.qt/
 # Python
 __pycache__/
+dist/

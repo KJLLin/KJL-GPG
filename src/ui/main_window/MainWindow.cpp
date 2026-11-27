@@ -28,6 +28,8 @@
 
 #include "MainWindow.h"
 
+#include <QImage>
+
 #include <algorithm>
 
 #include "core/function/GlobalSettingStation.h"
@@ -43,6 +45,46 @@
 #include "ui/widgets/TextEditTabWidget.h"
 
 namespace GpgFrontend::UI {
+
+/**
+ * @brief Turn the legacy colourful PNG action icons into a flat, single-colour
+ * line set that matches the KJL-GPG design system. Alpha is preserved, so the
+ * existing artwork's cut-outs and anti-aliased edges survive the tint.
+ */
+auto MakeThemeIcon(const QString& path) -> QIcon {
+  QImage source(path);
+  if (source.isNull()) return QIcon(path);
+
+  const bool dark =
+      GetSettings().value("appearance/ui_theme", "light").toString() == "dark";
+  const QImage scaled = source.scaled(64, 64, Qt::KeepAspectRatio,
+                                     Qt::SmoothTransformation)
+                            .convertToFormat(QImage::Format_ARGB32);
+
+  auto tinted = [&scaled](const QColor& color) -> QPixmap {
+    QImage image = scaled;
+    for (int y = 0; y < image.height(); ++y) {
+      for (int x = 0; x < image.width(); ++x) {
+        const auto pixel = image.pixel(x, y);
+        image.setPixel(x, y,
+                       qRgba(color.red(), color.green(), color.blue(),
+                             qAlpha(pixel)));
+      }
+    }
+    return QPixmap::fromImage(image);
+  };
+
+  QIcon icon;
+  icon.addPixmap(tinted(dark ? QColor("#CBD5E1") : QColor("#334155")),
+                 QIcon::Normal);
+  icon.addPixmap(tinted(dark ? QColor("#93C5FD") : QColor("#2563EB")),
+                 QIcon::Active);
+  icon.addPixmap(tinted(dark ? QColor("#93C5FD") : QColor("#2563EB")),
+                 QIcon::Selected);
+  icon.addPixmap(tinted(dark ? QColor("#5B6A80") : QColor("#A8B3C4")),
+                 QIcon::Disabled);
+  return icon;
+}
 
 MainWindow::MainWindow() : GeneralMainWindow("main_window") {
   this->setWindowTitle(qApp->applicationDisplayName());
@@ -287,7 +329,7 @@ auto MainWindow::create_action(const QString& id, const QString& name,
   auto* action = new QAction(name, this);
 
   if (!icon.isEmpty()) {
-    action->setIcon(QIcon(icon));
+    action->setIcon(MakeThemeIcon(icon));
   }
 
   action->setToolTip(too_tip);
