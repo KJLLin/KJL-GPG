@@ -101,6 +101,8 @@ KeyTable::KeyTable(QWidget* parent, QSharedPointer<GpgKeyTableModel> model,
 
 void KeyTable::InitTableStyle() {
   verticalHeader()->hide();
+  verticalHeader()->setDefaultSectionSize(30);
+  horizontalHeader()->setMinimumHeight(34);
   horizontalHeader()->setStretchLastSection(false);
   horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
   setShowGrid(false);

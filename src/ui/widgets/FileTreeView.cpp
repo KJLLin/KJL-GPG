@@ -147,8 +147,8 @@ QTreeView[gfFileTreeView="true"] {
 }
 
 QTreeView[gfFileTreeView="true"]::item {
-  min-height: 24px;
-  padding: 2px 4px;
+  min-height: 30px;
+  padding: 4px 8px;
   border: none;
 }
 

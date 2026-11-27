@@ -4771,7 +4771,9 @@ KJL-GPG 现在将尝试导入密钥。</translation>
         <source>No keys yet.
 
 Generate a key pair to make one, or import a key you already have.</source>
-        <translation type="unfinished"></translation>
+        <translation>还没有密钥。
+
+生成一对新密钥，或导入已有密钥。</translation>
     </message>
     <message>
         <location filename="../../../../src/ui/widgets/KeyTableEmptyState.cpp" line="61"/>
