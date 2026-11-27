@@ -28,7 +28,9 @@
 
 #include "MainWindow.h"
 
+#include <QColor>
 #include <QImage>
+#include <QPixmap>
 
 #include <algorithm>
 

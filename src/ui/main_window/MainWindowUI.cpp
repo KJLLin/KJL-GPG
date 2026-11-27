@@ -764,19 +764,6 @@ void MainWindow::init_main_window_style() {
   setStyleSheet(QString());
 }
 
-QToolBar::separator {
-  width: 1px;
-  margin: 4px 5px;
-  background: palette(mid);
-}
-
-QStatusBar {
-  border-top: 1px solid palette(mid);
-  background: palette(window);
-}
-)");
-}
-
 void MainWindow::apply_tool_bar_appearance() {
   const auto tool_button_style = icon_style_;
   const auto icon_size = icon_size_;
