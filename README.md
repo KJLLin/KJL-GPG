@@ -24,7 +24,7 @@
 
 | 浅色主题 | 深色主题 |
 | --- | --- |
-| ![浅色主题](docs/screenshots/ui-light.png) | ![深色主题](docs/screenshots/ui-dark.png) |
+| ![浅色主题](resource/screenshots/ui-light.png) | ![深色主题](resource/screenshots/ui-dark.png) |
 
 ---
 
