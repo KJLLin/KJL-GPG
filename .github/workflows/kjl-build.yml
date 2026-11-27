@@ -176,6 +176,11 @@ jobs:
     timeout-minutes: 45
 
     steps:
+      - name: Checkout (regression baseline)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/kjl-test-baseline.txt
+
       - name: Download portable package
         uses: actions/download-artifact@v4
         with:
@@ -263,6 +268,11 @@ jobs:
           $env:GNUPGHOME = Join-Path $root "gnupg-home"
           New-Item -ItemType Directory -Force $env:GNUPGHOME | Out-Null
           Set-Content -Path (Join-Path $bin "ENV.ini") -Value "PortableMode=true"
+          # Force Simplified Chinese for the UI screenshot, independent of the
+          # runner's en-US system locale.
+          $cfg = Join-Path $root "config"
+          New-Item -ItemType Directory -Force $cfg | Out-Null
+          Set-Content -Path (Join-Path $cfg "config.ini") -Value "[basic]`nlang=zh_CN"
           $proc = Start-Process -FilePath (Join-Path $bin "KJL-GPG.exe") `
                    -WorkingDirectory $bin -PassThru
           Start-Sleep -Seconds 20
