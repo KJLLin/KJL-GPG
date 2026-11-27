@@ -222,7 +222,9 @@ jobs:
           $failed = @()
           foreach ($suite in $doc.testsuites.testsuite) {
             foreach ($case in $suite.testcase) {
-              if ($case.failure -or $case.error) { $failed += $case.name }
+              if ($case.failure -or $case.error) {
+                $failed += "$($case.classname).$($case.name)"
+              }
             }
           }
           $baseline = Get-Content (Join-Path $env:GITHUB_WORKSPACE ".github/kjl-test-baseline.txt") |
