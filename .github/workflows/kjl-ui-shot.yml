@@ -1,0 +1,111 @@
+name: KJL-GPG UI Snapshot
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Build run id containing KJL-GPG-windows-x86_64-portable"
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  snapshot:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - name: Download build artifact
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh run download "${{ inputs.run_id }}" -R KJLLin/KJL-GPG `
+            -n KJL-GPG-windows-x86_64-portable -D pkg
+          Get-ChildItem pkg -Recurse -Filter *.zip | Select-Object FullName,Length
+
+      - name: Launch and capture
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $zip = Get-ChildItem pkg -Recurse -Filter *.zip | Select-Object -First 1
+          Expand-Archive $zip.FullName -DestinationPath pkg/expanded -Force
+          $root = (Resolve-Path pkg/expanded).Path
+          $bin = Join-Path $root "bin"
+          $env:PATH = "$(Join-Path $root 'gnupg\bin');$bin;$env:PATH"
+          $env:GNUPGHOME = Join-Path $root "gnupg-home"
+          New-Item -ItemType Directory -Force $env:GNUPGHOME | Out-Null
+          Set-Content -Path (Join-Path $bin "ENV.ini") -Value "PortableMode=true"
+          $cfg = Join-Path $root "config"
+          New-Item -ItemType Directory -Force $cfg | Out-Null
+          Set-Content -Path (Join-Path $cfg "config.ini") `
+            -Value "[basic]`nlang=zh_CN`n`n[appearance]`nui_theme=light"
+
+          Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+          Add-Type @"
+          using System;
+          using System.Runtime.InteropServices;
+          public class KJLShot2 {
+            [StructLayout(LayoutKind.Sequential)] public struct RECT { public int L,T,R,B; }
+            [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+            [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr dc, uint flags);
+            [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+            [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int cmd);
+          }
+          "@
+          $proc = Start-Process -FilePath (Join-Path $bin "KJL-GPG.exe") `
+                   -WorkingDirectory $bin -PassThru
+          $h = [IntPtr]::Zero
+          for ($i = 0; $i -lt 40; $i++) {
+            Start-Sleep -Seconds 1
+            $proc.Refresh()
+            $h = $proc.MainWindowHandle
+            if ($h -ne 0) { break }
+          }
+          Write-Host "hasExited=$($proc.HasExited) handle=$h title=$($proc.MainWindowTitle)"
+          if ($h -eq 0) { throw "no window" }
+          [KJLShot2]::ShowWindow($h, 5) | Out-Null
+          [KJLShot2]::SetForegroundWindow($h) | Out-Null
+          Start-Sleep -Seconds 8
+          $r = New-Object KJLShot2+RECT
+          [KJLShot2]::GetWindowRect($h, [ref]$r) | Out-Null
+          $w = [Math]::Max(1, $r.R - $r.L); $ht = [Math]::Max(1, $r.B - $r.T)
+          Write-Host "rect=$($r.L),$($r.T) ${w}x${ht}"
+
+          function Save-Print([string]$name, [uint32]$flag) {
+            $bmp = New-Object System.Drawing.Bitmap $w, $ht
+            $g = [System.Drawing.Graphics]::FromImage($bmp)
+            $hdc = $g.GetHdc()
+            $ok = [KJLShot2]::PrintWindow($h, $hdc, $flag)
+            $g.ReleaseHdc($hdc); $g.Dispose()
+            $path = Join-Path $env:GITHUB_WORKSPACE "$name.png"
+            $bmp.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+            Write-Host "$name flag=$flag ok=$ok bytes=$((Get-Item $path).Length)"
+            $bmp.Dispose()
+          }
+
+          function Save-Screen([string]$name) {
+            $bounds = [System.Windows.Forms.SystemInformation]::VirtualScreen
+            $bmp = New-Object System.Drawing.Bitmap $bounds.Width, $bounds.Height
+            $g = [System.Drawing.Graphics]::FromImage($bmp)
+            $g.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
+            $g.Dispose()
+            $path = Join-Path $env:GITHUB_WORKSPACE "$name.png"
+            $bmp.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+            Write-Host "$name screen bytes=$((Get-Item $path).Length)"
+            $bmp.Dispose()
+          }
+
+          Save-Print "shot-pw0" 0
+          Save-Print "shot-pw2" 2
+          Save-Screen "shot-screen"
+          Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+
+      - name: Upload snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: KJL-GPG-ui-snapshots
+          path: ${{ github.workspace }}/shot-*.png
+          if-no-files-found: warn
