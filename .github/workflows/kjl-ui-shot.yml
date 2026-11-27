@@ -68,10 +68,12 @@ jobs:
           [KJLShot2]::ShowWindow($h, 5) | Out-Null
           [KJLShot2]::SetForegroundWindow($h) | Out-Null
           Start-Sleep -Seconds 8
-          $r = New-Object KJLShot2+RECT
-          [KJLShot2]::GetWindowRect($h, [ref]$r) | Out-Null
-          $w = [Math]::Max(1, $r.R - $r.L); $ht = [Math]::Max(1, $r.B - $r.T)
-          Write-Host "rect=$($r.L),$($r.T) ${w}x${ht}"
+          # The hosted Windows runner uses a fixed 1024x768 desktop and the
+          # main window is placed at the top-left. GetWindowRect is unreliable
+          # here (returns an empty rect for the Qt window), so crop the known
+          # content area instead: window 1000x700, taskbar below.
+          $w = 1000; $ht = 700
+          Write-Host "crop=${w}x${ht}"
 
           function Save-Print([string]$name, [uint32]$flag) {
             $bmp = New-Object System.Drawing.Bitmap $w, $ht
@@ -89,7 +91,7 @@ jobs:
             $bmp = New-Object System.Drawing.Bitmap $w, $ht
             $g = [System.Drawing.Graphics]::FromImage($bmp)
             $size = New-Object System.Drawing.Size($w, $ht)
-            $g.CopyFromScreen($r.L, $r.T, 0, 0, $size)
+            $g.CopyFromScreen(0, 0, 0, 0, $size)
             $g.Dispose()
             $path = Join-Path $env:GITHUB_WORKSPACE "$name.png"
             $bmp.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)

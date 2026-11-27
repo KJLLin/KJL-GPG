@@ -304,13 +304,12 @@ jobs:
             Start-Sleep -Seconds 3
             [KJLShot]::SetForegroundWindow($h) | Out-Null
             Start-Sleep -Seconds 2
-            $r = New-Object KJLShot+RECT
-            [KJLShot]::GetWindowRect($h, [ref]$r) | Out-Null
-            $w = [Math]::Max(1, $r.R - $r.L); $ht = [Math]::Max(1, $r.B - $r.T)
+            # Fixed 1024x768 hosted desktop; the window sits at 0,0.
+            $w = 1000; $ht = 700
             $bmp = New-Object System.Drawing.Bitmap $w, $ht
             $g = [System.Drawing.Graphics]::FromImage($bmp)
             $size = New-Object System.Drawing.Size($w, $ht)
-            $g.CopyFromScreen($r.L, $r.T, 0, 0, $size)
+            $g.CopyFromScreen(0, 0, 0, 0, $size)
             $g.Dispose()
             $out = Join-Path $env:GITHUB_WORKSPACE "ui-screenshot-$theme.png"
             $bmp.Save($out, [System.Drawing.Imaging.ImageFormat]::Png)
