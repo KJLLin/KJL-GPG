@@ -290,7 +290,7 @@ jobs:
           function Capture-Theme([string]$theme) {
             # QSettings maps appearance/ui_theme to [appearance] ui_theme.
             Set-Content -Path (Join-Path $cfg "config.ini") `
-              -Value "[basic]`nlang=zh_CN`n`n[appearance]`nui_theme=$theme"
+              -Value "[basic]`nlang=zh_CN`n`n[appearance]`nui_theme=$theme`n`n[wizard]`nshow_wizard=false"
             $proc = Start-Process -FilePath (Join-Path $bin "KJL-GPG.exe") `
                      -WorkingDirectory $bin -PassThru
             $h = [IntPtr]::Zero
@@ -309,9 +309,9 @@ jobs:
             $w = [Math]::Max(1, $r.R - $r.L); $ht = [Math]::Max(1, $r.B - $r.T)
             $bmp = New-Object System.Drawing.Bitmap $w, $ht
             $g = [System.Drawing.Graphics]::FromImage($bmp)
-            $hdc = $g.GetHdc()
-            [KJLShot]::PrintWindow($h, $hdc, 2) | Out-Null
-            $g.ReleaseHdc($hdc); $g.Dispose()
+            $size = New-Object System.Drawing.Size($w, $ht)
+            $g.CopyFromScreen($r.L, $r.T, 0, 0, $size)
+            $g.Dispose()
             $out = Join-Path $env:GITHUB_WORKSPACE "ui-screenshot-$theme.png"
             $bmp.Save($out, [System.Drawing.Imaging.ImageFormat]::Png)
             $bmp.Dispose()

@@ -40,7 +40,7 @@ jobs:
           $cfg = Join-Path $root "config"
           New-Item -ItemType Directory -Force $cfg | Out-Null
           Set-Content -Path (Join-Path $cfg "config.ini") `
-            -Value "[basic]`nlang=zh_CN`n`n[appearance]`nui_theme=light"
+            -Value "[basic]`nlang=zh_CN`n`n[appearance]`nui_theme=light`n`n[wizard]`nshow_wizard=false"
 
           Add-Type -AssemblyName System.Windows.Forms, System.Drawing
           Add-Type @"
@@ -86,10 +86,10 @@ jobs:
           }
 
           function Save-Screen([string]$name) {
-            $bounds = [System.Windows.Forms.SystemInformation]::VirtualScreen
-            $bmp = New-Object System.Drawing.Bitmap $bounds.Width, $bounds.Height
+            $bmp = New-Object System.Drawing.Bitmap $w, $ht
             $g = [System.Drawing.Graphics]::FromImage($bmp)
-            $g.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
+            $size = New-Object System.Drawing.Size($w, $ht)
+            $g.CopyFromScreen($r.L, $r.T, 0, 0, $size)
             $g.Dispose()
             $path = Join-Path $env:GITHUB_WORKSPACE "$name.png"
             $bmp.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
@@ -97,9 +97,7 @@ jobs:
             $bmp.Dispose()
           }
 
-          Save-Print "shot-pw0" 0
-          Save-Print "shot-pw2" 2
-          Save-Screen "shot-screen"
+          Save-Screen "shot-ui"
           Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
 
       - name: Upload snapshots
